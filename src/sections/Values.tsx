@@ -15,12 +15,15 @@ export default function Values() {
     clarity: false,
     liquidity: false,
   });
+  const [isVisible, setIsVisible] = React.useState(false);
   
+  const sectionRef = React.useRef<HTMLDivElement | null>(null);
   const controlPathRef = React.useRef<SVGPathElement | null>(null);
   const clarityPathRef = React.useRef<SVGPathElement | null>(null);
   const liquidityPathRef = React.useRef<SVGPathElement | null>(null);
   const animationRef = React.useRef<number | undefined>(undefined);
   const startTimeRef = React.useRef<number>(0);
+  const pausedTimeRef = React.useRef<number>(0);
 
   const durationPerArc = 1600;
   const betweenArcs = 0;
@@ -29,6 +32,49 @@ export default function Values() {
   const totalCycleDuration = (durationPerArc + betweenArcs) * 3 + betweenCycles;
 
   React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(entry.isIntersecting);
+        });
+      },
+      {
+        threshold: 0.2,
+      }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (!isVisible) {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = undefined;
+      }
+      startTimeRef.current = 0;
+      pausedTimeRef.current = 0;
+      setGlowPositions({
+        control: { x: 0.487732, y: 171.039, visible: false, progress: 0 },
+        clarity: { x: 0.487732, y: 171.039, visible: false, progress: 0 },
+        liquidity: { x: 0.487732, y: 171.039, visible: false, progress: 0 },
+      });
+      setCompletedArcs({
+        control: false,
+        clarity: false,
+        liquidity: false,
+      });
+      return;
+    }
+
     const animate = (timestamp: number) => {
       if (!startTimeRef.current) startTimeRef.current = timestamp;
       
@@ -135,7 +181,7 @@ export default function Values() {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isMobile]);
+  }, [isMobile, isVisible]);
   
   return (
     <Box
@@ -164,6 +210,7 @@ export default function Values() {
         </Typography>
 
         <Box
+          ref={sectionRef}
           sx={{
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
