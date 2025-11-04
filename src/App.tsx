@@ -25,23 +25,29 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <Box
         sx={{
-          opacity: loaded ? 1 : 0,
-          transform: loaded ? "translateY(0)" : "translateY(20px)",
-          transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
+          bgcolor: "#0D0D0D", // The black page container
         }}
       >
-        <Box 
-          sx={{ 
-            bgcolor: "#F6F7F9",
+        <Box
+          sx={{
+            opacity: loaded ? 1 : 0,
+            transform: loaded ? "translateY(0)" : "translateY(20px)",
+            transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
           }}
         >
-          <NavBar />
-          <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
-            <Hero />
-          </Container>
-          <Values />
+          <Box 
+            sx={{ 
+              bgcolor: "#F6F7F9",
+            }}
+          >
+            <NavBar />
+            <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
+              <Hero />
+            </Container>
+            <Values />
+          </Box>
+          <Footer />
         </Box>
-        <Footer />
       </Box>
     </ThemeProvider>
   );
