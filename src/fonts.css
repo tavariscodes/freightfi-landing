@@ -66,14 +66,14 @@ body {
   min-height: 100vh;
 }
 
-/* Pseudo-element for iOS overscroll at bottom */
-body::after {
+/* Fixed pseudo-element for iOS overscroll at bottom */
+body::before {
   content: '';
-  position: absolute;
-  top: 100%;
+  position: fixed;
+  bottom: 0;
   left: 0;
   right: 0;
-  height: 200%;
+  height: 100vh;
   background: #0D0D0D;
   pointer-events: none;
   z-index: -1;
