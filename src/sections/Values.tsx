@@ -15,89 +15,42 @@ export default function Values() {
     clarity: false,
     liquidity: false,
   });
-  const [isVisible, setIsVisible] = React.useState(false);
   
   const sectionRef = React.useRef<HTMLDivElement | null>(null);
   const controlPathRef = React.useRef<SVGPathElement | null>(null);
   const clarityPathRef = React.useRef<SVGPathElement | null>(null);
   const liquidityPathRef = React.useRef<SVGPathElement | null>(null);
-  const animationRef = React.useRef<number | undefined>(undefined);
-  const startTimeRef = React.useRef<number>(0);
-  const pausedTimeRef = React.useRef<number>(0);
-
-  const durationPerArc = 1600;
-  const betweenArcs = 0;
-  const betweenCycles = 600;
-  
-  const totalCycleDuration = (durationPerArc + betweenArcs) * 3 + betweenCycles;
 
   React.useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          setIsVisible(entry.isIntersecting);
-        });
-      },
-      {
-        threshold: 0.2,
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+
+      const section = sectionRef.current;
+      const rect = section.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      const sectionTop = rect.top;
+      const sectionBottom = rect.bottom;
+      const sectionHeight = rect.height;
+      
+      const scrollStart = windowHeight - 100;
+      const scrollEnd = -sectionHeight + 100;
+      
+      let scrollProgress = 0;
+      if (sectionTop <= scrollStart && sectionBottom >= scrollEnd) {
+        scrollProgress = (scrollStart - sectionTop) / (scrollStart - scrollEnd);
+        scrollProgress = Math.max(0, Math.min(1, scrollProgress));
+      } else if (sectionBottom < scrollEnd) {
+        scrollProgress = 1;
       }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
-    };
-  }, []);
-
-  React.useEffect(() => {
-    if (!isVisible) {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-        animationRef.current = undefined;
-      }
-      startTimeRef.current = 0;
-      pausedTimeRef.current = 0;
-      setGlowPositions({
-        control: { x: 0.487732, y: 171.039, visible: false, progress: 0 },
-        clarity: { x: 0.487732, y: 171.039, visible: false, progress: 0 },
-        liquidity: { x: 0.487732, y: 171.039, visible: false, progress: 0 },
-      });
-      setCompletedArcs({
-        control: false,
-        clarity: false,
-        liquidity: false,
-      });
-      return;
-    }
-
-    const animate = (timestamp: number) => {
-      if (!startTimeRef.current) startTimeRef.current = timestamp;
       
-      const elapsed = timestamp - startTimeRef.current;
-      const cycleProgress = (elapsed % totalCycleDuration) / totalCycleDuration;
-      const cycleTime = elapsed % totalCycleDuration;
-      
-      const controlStart = 0;
-      const controlEnd = durationPerArc;
-      
-      const clarityStart = durationPerArc + betweenArcs;
-      const clarityEnd = clarityStart + durationPerArc;
-      
-      const liquidityStart = 2 * (durationPerArc + betweenArcs);
-      const liquidityEnd = liquidityStart + durationPerArc;
-      
-      const resetStart = liquidityEnd;
+      const arcProgress = scrollProgress * 3;
       
       let newGlowPositions = { ...glowPositions };
       let newCompletedArcs = { ...completedArcs };
       
-      if (cycleTime >= controlStart && cycleTime < controlEnd) {
-        const progress = (cycleTime - controlStart) / durationPerArc;
+      if (arcProgress >= 0 && arcProgress <= 1) {
+        const progress = arcProgress;
         if (controlPathRef.current) {
           const path = controlPathRef.current;
           const length = path.getTotalLength();
@@ -105,7 +58,7 @@ export default function Values() {
           newGlowPositions.control = { x: point.x, y: point.y, visible: true, progress };
           newCompletedArcs.control = progress >= 1;
         }
-      } else if (cycleTime >= controlEnd && cycleTime < resetStart) {
+      } else if (arcProgress > 1) {
         newCompletedArcs.control = true;
         if (isMobile && controlPathRef.current) {
           const path = controlPathRef.current;
@@ -120,8 +73,8 @@ export default function Values() {
         newGlowPositions.control = { x: 0.487732, y: 171.039, visible: false, progress: 0 };
       }
       
-      if (cycleTime >= clarityStart && cycleTime < clarityEnd) {
-        const progress = (cycleTime - clarityStart) / durationPerArc;
+      if (arcProgress >= 1 && arcProgress <= 2) {
+        const progress = arcProgress - 1;
         if (clarityPathRef.current) {
           const path = clarityPathRef.current;
           const length = path.getTotalLength();
@@ -129,7 +82,7 @@ export default function Values() {
           newGlowPositions.clarity = { x: point.x, y: point.y, visible: true, progress };
           newCompletedArcs.clarity = progress >= 1;
         }
-      } else if (cycleTime >= clarityEnd && cycleTime < resetStart) {
+      } else if (arcProgress > 2) {
         newCompletedArcs.clarity = true;
         if (isMobile && clarityPathRef.current) {
           const path = clarityPathRef.current;
@@ -144,8 +97,8 @@ export default function Values() {
         newGlowPositions.clarity = { x: 0.487732, y: 171.039, visible: false, progress: 0 };
       }
       
-      if (cycleTime >= liquidityStart && cycleTime < liquidityEnd) {
-        const progress = (cycleTime - liquidityStart) / durationPerArc;
+      if (arcProgress >= 2 && arcProgress <= 3) {
+        const progress = arcProgress - 2;
         if (liquidityPathRef.current) {
           const path = liquidityPathRef.current;
           const length = path.getTotalLength();
@@ -153,7 +106,7 @@ export default function Values() {
           newGlowPositions.liquidity = { x: point.x, y: point.y, visible: true, progress };
           newCompletedArcs.liquidity = progress >= 1;
         }
-      } else if (cycleTime >= liquidityEnd && cycleTime < resetStart) {
+      } else if (arcProgress > 3) {
         newCompletedArcs.liquidity = true;
         if (isMobile && liquidityPathRef.current) {
           const path = liquidityPathRef.current;
@@ -170,18 +123,15 @@ export default function Values() {
       
       setGlowPositions(newGlowPositions);
       setCompletedArcs(newCompletedArcs);
-      
-      animationRef.current = requestAnimationFrame(animate);
     };
-    
-    animationRef.current = requestAnimationFrame(animate);
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
+      window.removeEventListener('scroll', handleScroll);
     };
-  }, [isMobile, isVisible]);
+  }, [isMobile]);
   
   return (
     <Box

@@ -15,7 +15,6 @@ const Footer: React.FC = () => {
       }}
     >
       <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
-        {/* Logo and Description */}
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <Image
@@ -45,7 +44,6 @@ const Footer: React.FC = () => {
           </Typography>
         </Box>
 
-        {/* Social Icons */}
         <Box sx={{ mb: 6, display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' } }}>
           <IconButton
             component="a"
@@ -67,7 +65,6 @@ const Footer: React.FC = () => {
           </IconButton>
         </Box>
 
-        {/* Divider */}
         <Box
           sx={{
             borderTop: '1px solid #484848',
@@ -75,7 +72,6 @@ const Footer: React.FC = () => {
           }}
         />
 
-        {/* Copyright */}
         <Typography
           sx={{
             fontSize: '16px',
