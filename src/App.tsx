@@ -21,6 +21,24 @@ export default function App() {
     setLoaded(true);
   }, []);
 
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const isNearBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500;
+      const htmlElement = document.documentElement;
+      
+      if (isNearBottom) {
+        htmlElement.style.backgroundColor = '#0D0D0D';
+      } else {
+        htmlElement.style.backgroundColor = '#F6F7F9';
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <Box
