@@ -1,4 +1,5 @@
-import { Box, Link, Stack, Typography } from "@mui/material";
+import { Box, Button, Link, Stack, Typography } from "@mui/material";
+import Image from "../components/Image";
 
 export default function Hero() {
   return (
@@ -25,8 +26,7 @@ export default function Hero() {
               gap: "8px",
             }}
           >
-          <Box
-            component="img"
+          <Image
             src="/images/trusted-emblem.svg"
             alt="Trusted shield icon"
             sx={{
@@ -91,46 +91,132 @@ export default function Hero() {
 
             <Stack 
               direction="row" 
-              spacing={{ xs: 1, md: 3 }} 
+              spacing={{ xs: 2, md: 3 }} 
               sx={{ 
                 width: { xs: "100%", md: "auto" },
-                ml: { xs: -1, md: 0 },
+                justifyContent: { xs: "center", md: "flex-start" },
               }}
             >
-              <Link href="https://calendar.app.google/jiyCYTJCvfRYMbyq6">
-              <Box
-                component="img"
-                src="/images/book-a-demo-blue.svg"
-                alt="Book a Demo"
+              <Button
+                component={Link}
+                href="https://calendar.app.google/jiyCYTJCvfRYMbyq6"
+                variant="contained"
                 sx={{
-                  height: { xs: 44, md: 44 },
-                  width: { xs: "100%", md: "auto" },
-                  cursor: "pointer",
-                  flex: { xs: 1, md: "0 0 auto" },
-                  objectFit: "contain",
+                  height: { xs: "40px", sm: "44px" },
+                  width: "auto",
+                  minWidth: "fit-content",
+                  bgcolor: "#4C80F5",
+                  borderRadius: "41px",
+                  padding: { xs: "6px 4px 6px 12px", sm: "8px 6px 8px 16px" },
+                  fontSize: { xs: "14px", sm: "16px" },
+                  fontWeight: 500,
+                  color: "#FFFFFF",
+                  textTransform: "none",
+                  whiteSpace: "nowrap",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: { xs: "10px", sm: "12px" },
+                  boxShadow: "none",
                   "&:hover": {
+                    bgcolor: "#4C80F5",
                     opacity: 0.9,
+                    boxShadow: "none",
                   },
                 }}
-                />
-                </Link>
-              <Link href="https://calendar.app.google/jiyCYTJCvfRYMbyq6">
-              <Box
-                component="img"
-                src="/images/see-how-it-works.svg"
-                alt="See How It Works"
+              >
+                Book a Demo
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: { xs: "28px", sm: "32px" },
+                    height: { xs: "28px", sm: "32px" },
+                    borderRadius: "50%",
+                    bgcolor: "#FFFFFF",
+                    flexShrink: 0,
+                  }}
+                >
+                  <svg
+                    width="8"
+                    height="14"
+                    viewBox="0 0 8 14"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{
+                      marginLeft: "1px",
+                    }}
+                  >
+                    <path
+                      d="M1 1L7 7L1 13"
+                      stroke="#4C80F5"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </Box>
+              </Button>
+
+              <Button
+                component={Link}
+                href="https://calendar.app.google/jiyCYTJCvfRYMbyq6"
+                variant="outlined"
                 sx={{
-                  height: { xs: 44, md: 44 },
-                  width: { xs: "100%", md: "auto" },
-                  cursor: "pointer",
-                  flex: { xs: 1, md: "0 0 auto" },
-                  objectFit: "contain",
+                  height: { xs: "40px", sm: "44px" },
+                  width: "auto",
+                  minWidth: "fit-content",
+                  border: "1px solid #B9B9B9",
+                  borderRadius: "41px",
+                  padding: { xs: "6px 4px 6px 12px", sm: "8px 6px 8px 16px" },
+                  fontSize: { xs: "14px", sm: "16px" },
+                  fontWeight: 500,
+                  color: "#0D0D0D",
+                  textTransform: "none",
+                  whiteSpace: "nowrap",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: { xs: "10px", sm: "12px" },
                   "&:hover": {
-                    opacity: 0.9,
+                    border: "1px solid #B9B9B9",
+                    opacity: 0.8,
+                    bgcolor: "transparent",
                   },
                 }}
-                />
-                </Link>
+              >
+                See How It Works
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: { xs: "28px", sm: "32px" },
+                    height: { xs: "28px", sm: "32px" },
+                    borderRadius: "50%",
+                    bgcolor: "#0D0D0D",
+                    flexShrink: 0,
+                  }}
+                >
+                  <svg
+                    width="8"
+                    height="14"
+                    viewBox="0 0 8 14"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{
+                      marginLeft: "1px",
+                    }}
+                  >
+                    <path
+                      d="M1 1L7 7L1 13"
+                      stroke="#FEFFFF"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </Box>
+              </Button>
             </Stack>
           </Stack>
         </Box>
@@ -143,8 +229,7 @@ export default function Hero() {
           mt: { xs: 6, md: 10 },
         }}
       >
-        <Box
-          component="img"
+        <Image
           src="/images/FreightFi-dashboard-mobile.png"
           alt="FreightFi dashboard preview showing financial overview"
           sx={{
@@ -157,8 +242,7 @@ export default function Hero() {
           }}
         />
         
-        <Box
-          component="img"
+        <Image
           src="/images/FreightFi-dashboard.png"
           alt="FreightFi dashboard preview showing financial overview"
           sx={{

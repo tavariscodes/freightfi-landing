@@ -3,6 +3,7 @@ import { Container, Box, ThemeProvider, createTheme } from "@mui/material";
 import NavBar from "./components/NavBar";
 import Hero from "./sections/Hero";
 import Values from "./sections/Values";
+import Footer from "./sections/Footer";
 
 const theme = createTheme({
   typography: {
@@ -37,6 +38,7 @@ export default function App() {
         </Container>
         <Values />
       </Box>
+      <Footer />
     </ThemeProvider>
   );
 }
