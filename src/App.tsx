@@ -3,6 +3,7 @@ import { Container, Box, ThemeProvider, createTheme } from "@mui/material";
 import NavBar from "./components/NavBar";
 import Hero from "./sections/Hero";
 import Values from "./sections/Values";
+import TransformFlow from "./sections/TransformFlow";
 import Footer from "./sections/Footer";
 
 const theme = createTheme({
@@ -55,6 +56,7 @@ export default function App() {
           <Hero />
         </Container>
         <Values />
+        <TransformFlow />
       </Box>
       <Footer />
     </ThemeProvider>
