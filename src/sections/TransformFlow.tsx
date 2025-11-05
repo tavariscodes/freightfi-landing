@@ -6,9 +6,9 @@ export default function TransformFlow() {
     <Box
       component="section"
       sx={{
-        background: "linear-gradient(180deg, #e9f2f5 0%, #f6f7f9 100%)",
+        background: "linear-gradient(180deg, #e9f2f5 0%, #f6f7f9 10%)",
         minHeight: "400px",
-        py: { xs: 6, md: 12 },
+        py: { xs: 3, md: 12 },
       }}
     >
       <Box sx={{ mx: "auto", px: { xs: 2, md: 15 } }}>
