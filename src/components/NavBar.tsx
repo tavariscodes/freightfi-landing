@@ -1,7 +1,7 @@
 import { AppBar, Toolbar, Typography, Box, Stack, Container, Link } from "@mui/material";
+import Image from "./Image";
 
 export default function NavBar() {
-  // const navItems = ["Product", "Solutions", "About", "Resources", "Contact"];
 
   return (
     <AppBar
@@ -26,8 +26,7 @@ export default function NavBar() {
           }}
         >
         <Stack direction="row" alignItems="center" spacing={1.5}>
-          <Box
-            component="img"
+          <Image
             src="/images/FreightFi-logo.svg"
             alt="FreightFi Logo"
             sx={{
@@ -122,8 +121,7 @@ export default function NavBar() {
         </Button> */}
 
       <Link href="https://calendar.app.google/jiyCYTJCvfRYMbyq6">
-        <Box
-          component="img"
+        <Image
           src="/images/book-a-demo.svg"
           alt="Book a Demo"
           sx={{
@@ -135,7 +133,7 @@ export default function NavBar() {
               opacity: 0.9,
             },
           }}
-          />
+        />
           </Link>
       </Toolbar>
       </Container>
