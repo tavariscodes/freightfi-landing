@@ -201,9 +201,11 @@ export default function FinancialSystem() {
           gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           alignItems: "center",
           mt: { xs: 5, md: 16 },
+          width: "100%",
+          minWidth: 0,
         }}
       >
-        <Box sx={{ order: { xs: 2, md: 1 } }}>
+        <Box sx={{ order: { xs: 2, md: 1 }, minWidth: 0 }}>
           <Box
             sx={{
               width: "100%",
@@ -219,6 +221,7 @@ export default function FinancialSystem() {
               py: { xs: "12px", md: "16px" },
               px: { xs: "12px", md: "0px" },
               minHeight: { xs: "auto", md: 0 },
+              boxSizing: "border-box",
             }}
           >
             <Image
