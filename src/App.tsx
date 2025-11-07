@@ -6,6 +6,7 @@ import Values from "./sections/Values";
 import TransformFlow from "./sections/TransformFlow";
 import Footer from "./sections/Footer";
 import FinancialSystem from "./sections/FinancialSystem";
+import Audiences from "./sections/Audiences";
 
 const theme = createTheme({
   typography: {
@@ -59,6 +60,7 @@ export default function App() {
         <Values />
         <TransformFlow />
         <FinancialSystem />
+        <Audiences />
       </Box>
       <Footer />
     </ThemeProvider>
