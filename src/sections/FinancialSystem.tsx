@@ -276,7 +276,6 @@ export default function FinancialSystem() {
               "Catch billing discrepancies before invoices go out",
               "Machine learning verification of documents and rates",
               "Live DSO and margin tracking across clients and carriers",
-              "Auto-flagged exceptions for faster resolution",
               "Unified financial dashboard across teams & partners",
             ].map((item, index) => (
               <Box
@@ -361,7 +360,6 @@ export default function FinancialSystem() {
               "Predictable payment timelines for all parties",
               "Verified data for faster fund release and trust",
               "Accurate, auditable transaction history",
-              "Unified financial dashboard across teams & partners",
             ].map((item, index) => (
               <Box
                 key={index}

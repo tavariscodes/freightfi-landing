@@ -6,7 +6,7 @@ export default function TransformFlow() {
     <Box
       component="section"
       sx={{
-        background: "linear-gradient(180deg, #e9f2f5 0%, #f6f7f9 10%)",
+        background: "linear-gradient(180deg, #e9f2f5 0%, #f6f7f9 25%)",
         minHeight: "400px",
         py: { xs: 3, md: 12 },
       }}

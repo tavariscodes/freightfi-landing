@@ -20,118 +20,197 @@ export default function Values() {
   const controlPathRef = React.useRef<SVGPathElement | null>(null);
   const clarityPathRef = React.useRef<SVGPathElement | null>(null);
   const liquidityPathRef = React.useRef<SVGPathElement | null>(null);
+  const [animationProgress, setAnimationProgress] = React.useState(0);
+  const lockStateRef = React.useRef<'IDLE' | 'LOCKED' | 'FINISHED'>('IDLE');
+  const lockPositionRef = React.useRef<number>(0);
 
   React.useEffect(() => {
-    const handleScroll = () => {
-      if (!sectionRef.current) return;
+    if (!isMobile) {
+      const handleScroll = () => {
+        if (!sectionRef.current || lockStateRef.current === 'LOCKED') {
+          return;
+        }
 
-      const section = sectionRef.current;
-      const rect = section.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      
-      const sectionTop = rect.top;
-      const sectionBottom = rect.bottom;
-      const sectionHeight = rect.height;
-      
-      const scrollStart = windowHeight - 100;
-      const scrollEnd = -sectionHeight + 100;
-      
-      let scrollProgress = 0;
-      if (sectionTop <= scrollStart && sectionBottom >= scrollEnd) {
-        scrollProgress = (scrollStart - sectionTop) / (scrollStart - scrollEnd);
-        scrollProgress = Math.max(0, Math.min(1, scrollProgress));
-      } else if (sectionBottom < scrollEnd) {
-        scrollProgress = 1;
-      }
-      
-      const arcProgress = scrollProgress * 3;
-      
-      let newGlowPositions = { ...glowPositions };
-      let newCompletedArcs = { ...completedArcs };
-      
-      if (arcProgress >= 0 && arcProgress <= 1) {
-        const progress = arcProgress;
-        if (controlPathRef.current) {
-          const path = controlPathRef.current;
-          const length = path.getTotalLength();
-          const point = path.getPointAtLength(progress * length);
-          newGlowPositions.control = { x: point.x, y: point.y, visible: true, progress };
-          newCompletedArcs.control = progress >= 1;
-        }
-      } else if (arcProgress > 1) {
-        newCompletedArcs.control = true;
-        if (isMobile && controlPathRef.current) {
-          const path = controlPathRef.current;
-          const length = path.getTotalLength();
-          const endPoint = path.getPointAtLength(length);
-          newGlowPositions.control = { x: endPoint.x, y: endPoint.y, visible: true, progress: 1 };
-        } else {
-          newGlowPositions.control = { ...newGlowPositions.control, visible: false, progress: 1 };
-        }
-      } else {
-        newCompletedArcs.control = false;
-        newGlowPositions.control = { x: 0.487732, y: 171.039, visible: false, progress: 0 };
-      }
-      
-      if (arcProgress >= 1 && arcProgress <= 2) {
-        const progress = arcProgress - 1;
-        if (clarityPathRef.current) {
-          const path = clarityPathRef.current;
-          const length = path.getTotalLength();
-          const point = path.getPointAtLength(progress * length);
-          newGlowPositions.clarity = { x: point.x, y: point.y, visible: true, progress };
-          newCompletedArcs.clarity = progress >= 1;
-        }
-      } else if (arcProgress > 2) {
-        newCompletedArcs.clarity = true;
-        if (isMobile && clarityPathRef.current) {
-          const path = clarityPathRef.current;
-          const length = path.getTotalLength();
-          const endPoint = path.getPointAtLength(length);
-          newGlowPositions.clarity = { x: endPoint.x, y: endPoint.y, visible: true, progress: 1 };
-        } else {
-          newGlowPositions.clarity = { ...newGlowPositions.clarity, visible: false, progress: 1 };
-        }
-      } else {
-        newCompletedArcs.clarity = false;
-        newGlowPositions.clarity = { x: 0.487732, y: 171.039, visible: false, progress: 0 };
-      }
-      
-      if (arcProgress >= 2 && arcProgress <= 3) {
-        const progress = arcProgress - 2;
-        if (liquidityPathRef.current) {
-          const path = liquidityPathRef.current;
-          const length = path.getTotalLength();
-          const point = path.getPointAtLength(progress * length);
-          newGlowPositions.liquidity = { x: point.x, y: point.y, visible: true, progress };
-          newCompletedArcs.liquidity = progress >= 1;
-        }
-      } else if (arcProgress > 3) {
-        newCompletedArcs.liquidity = true;
-        if (isMobile && liquidityPathRef.current) {
-          const path = liquidityPathRef.current;
-          const length = path.getTotalLength();
-          const endPoint = path.getPointAtLength(length);
-          newGlowPositions.liquidity = { x: endPoint.x, y: endPoint.y, visible: true, progress: 1 };
-        } else {
-          newGlowPositions.liquidity = { ...newGlowPositions.liquidity, visible: false, progress: 1 };
-        }
-      } else {
-        newCompletedArcs.liquidity = false;
-        newGlowPositions.liquidity = { x: 0.487732, y: 171.039, visible: false, progress: 0 };
-      }
-      
-      setGlowPositions(newGlowPositions);
-      setCompletedArcs(newCompletedArcs);
-    };
+        const section = sectionRef.current;
+        const rect = section.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
 
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
+        const sectionCenter = rect.top + rect.height / 2;
+        const lockTriggerPoint = windowHeight * 0.7; // Lock when center is at 70% down the screen
+        const isReadyToLock = Math.abs(sectionCenter - lockTriggerPoint) < 50; // 50px threshold for centering
+
+        if (isReadyToLock && lockStateRef.current === 'IDLE') {
+          lockStateRef.current = 'LOCKED';
+          lockPositionRef.current = window.scrollY;
+          document.documentElement.style.overflow = 'hidden';
+          document.body.style.overflow = 'hidden';
+        }
+
+        if (lockStateRef.current === 'FINISHED' && !isReadyToLock) {
+            lockStateRef.current = 'IDLE';
+        }
+      };
+
+      const handleWheel = (e: WheelEvent) => {
+        if (lockStateRef.current !== 'LOCKED') {
+          return;
+        }
+
+        e.preventDefault();
+
+        const scrollSensitivity = 0.0005;
+        let newProgress = animationProgress + e.deltaY * scrollSensitivity;
+        newProgress = Math.max(0, Math.min(1, newProgress));
+
+        setAnimationProgress(newProgress);
+
+        if (newProgress >= 1) {
+          lockStateRef.current = 'FINISHED';
+          document.documentElement.style.overflow = '';
+          document.body.style.overflow = '';
+        }
+        
+        if (e.deltaY < 0 && newProgress <= 0) {
+          lockStateRef.current = 'IDLE';
+          document.documentElement.style.overflow = '';
+          document.body.style.overflow = '';
+        }
+      };
+      
+      const forceScrollPosition = () => {
+          if (lockStateRef.current === 'LOCKED') {
+              window.scrollTo(0, lockPositionRef.current);
+          }
+          requestAnimationFrame(forceScrollPosition);
+      };
+
+      window.addEventListener('scroll', handleScroll);
+      window.addEventListener('wheel', handleWheel, { passive: false });
+      requestAnimationFrame(forceScrollPosition);
+
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+        window.removeEventListener('wheel', handleWheel);
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+      };
+    }
+    else {
+      const handleMobileScroll = () => {
+        if (!sectionRef.current) return;
+
+        const section = sectionRef.current;
+        const rect = section.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        
+        const sectionTop = rect.top;
+        const sectionBottom = rect.bottom;
+        const sectionHeight = rect.height;
+        
+        const scrollStart = windowHeight - 100;
+        const scrollEnd = -sectionHeight + 100;
+        
+        let progress = 0;
+        if (sectionTop <= scrollStart && sectionBottom >= scrollEnd) {
+          progress = (scrollStart - sectionTop) / (scrollStart - scrollEnd);
+          progress = Math.max(0, Math.min(1, progress));
+        } else if (sectionBottom < scrollEnd) {
+          progress = 1;
+        }
+        
+        setAnimationProgress(progress);
+      };
+
+      window.addEventListener('scroll', handleMobileScroll, { passive: true });
+
+      return () => {
+        window.removeEventListener('scroll', handleMobileScroll);
+      };
+    }
+  }, [isMobile, animationProgress]);
+
+  React.useEffect(() => {
+    const arcProgress = animationProgress * 3;
     
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [isMobile]);
+    let newGlowPositions = { ...glowPositions };
+    let newCompletedArcs = { ...completedArcs };
+    
+    if (arcProgress >= 0 && arcProgress <= 1) {
+      const progress = arcProgress;
+      if (controlPathRef.current) {
+        const path = controlPathRef.current;
+        const length = path.getTotalLength();
+        const point = path.getPointAtLength(progress * length);
+        newGlowPositions.control = { x: point.x, y: point.y, visible: true, progress };
+        newCompletedArcs.control = progress >= 1;
+      }
+    } else if (arcProgress > 1) {
+      newCompletedArcs.control = true;
+      if (isMobile && controlPathRef.current) {
+        const path = controlPathRef.current;
+        const length = path.getTotalLength();
+        const endPoint = path.getPointAtLength(length);
+        newGlowPositions.control = { x: endPoint.x, y: endPoint.y, visible: true, progress: 1 };
+      } else {
+        newGlowPositions.control = { ...newGlowPositions.control, visible: false, progress: 1 };
+      }
+    } else {
+      newCompletedArcs.control = false;
+      newGlowPositions.control = { x: 0.487732, y: 171.039, visible: false, progress: 0 };
+    }
+    
+    if (arcProgress >= 1 && arcProgress <= 2) {
+      const progress = arcProgress - 1;
+      if (clarityPathRef.current) {
+        const path = clarityPathRef.current;
+        const length = path.getTotalLength();
+        const point = path.getPointAtLength(progress * length);
+        newGlowPositions.clarity = { x: point.x, y: point.y, visible: true, progress };
+        newCompletedArcs.clarity = progress >= 1;
+      }
+    } else if (arcProgress > 2) {
+      newCompletedArcs.clarity = true;
+      if (isMobile && clarityPathRef.current) {
+        const path = clarityPathRef.current;
+        const length = path.getTotalLength();
+        const endPoint = path.getPointAtLength(length);
+        newGlowPositions.clarity = { x: endPoint.x, y: endPoint.y, visible: true, progress: 1 };
+      } else {
+        newGlowPositions.clarity = { ...newGlowPositions.clarity, visible: false, progress: 1 };
+      }
+    } else {
+      newCompletedArcs.clarity = false;
+      newGlowPositions.clarity = { x: 0.487732, y: 171.039, visible: false, progress: 0 };
+    }
+    
+    if (arcProgress >= 2 && arcProgress <= 3) {
+      const progress = arcProgress - 2;
+      if (liquidityPathRef.current) {
+        const path = liquidityPathRef.current;
+        const length = path.getTotalLength();
+        const point = path.getPointAtLength(progress * length);
+        newGlowPositions.liquidity = { x: point.x, y: point.y, visible: true, progress };
+        newCompletedArcs.liquidity = progress >= 1;
+      }
+    } else if (arcProgress > 3) {
+      newCompletedArcs.liquidity = true;
+      if (isMobile && liquidityPathRef.current) {
+        const path = liquidityPathRef.current;
+        const length = path.getTotalLength();
+        const endPoint = path.getPointAtLength(length);
+        newGlowPositions.liquidity = { x: endPoint.x, y: endPoint.y, visible: true, progress: 1 };
+      } else {
+        newGlowPositions.liquidity = { ...newGlowPositions.liquidity, visible: false, progress: 1 };
+      }
+    } else {
+      newCompletedArcs.liquidity = false;
+      newGlowPositions.liquidity = { x: 0.487732, y: 171.039, visible: false, progress: 0 };
+    }
+    
+    setGlowPositions(newGlowPositions);
+    setCompletedArcs(newCompletedArcs);
+  }, [animationProgress, isMobile, glowPositions, completedArcs]);
   
   return (
     <Box
