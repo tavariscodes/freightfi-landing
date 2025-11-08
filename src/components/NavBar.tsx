@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Typography, Box, Stack, Container, Link } from "@mui/material";
+import { AppBar, Toolbar, Typography, Stack, Container, Link } from "@mui/material";
 import Image from "./Image";
 
 export default function NavBar() {
